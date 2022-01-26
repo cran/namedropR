@@ -8,8 +8,9 @@
 #' @param cite_key If given, either a character string or a vector of strings are accepted.
 #' Specifies the reference items within the bibliography for which visual citations should be created.
 #' If no key is specified, a visual citation is created for ALL reference items within the bibliography.
+#' In other words, either one, many or no BibTeX citation keys can be specified.
 #' @param export_as A string specifying the desired output format. For now supports PNG and HTML.
-#' Use "html" to include the 'bare' taglist (recommended for inclusion in Rmarkdown documents) or "html_full" to write a standalone .html file inlcuding <head> etc.
+#' Use "html" to include the 'bare' taglist (recommended for inclusion in Rmarkdown documents) or "html_full" to write a standalone .html file including <head> etc.
 #' The PNG is a screenshot of the rendered HTML via the 'webshot' package. The filename represents this two step approach on purpose.
 #' For webshot you need to install phantomJS once (see 'webshot' documentation).
 #' @param output_dir A string specifying the relative path, where the rendered output files should be stored.
@@ -20,16 +21,20 @@
 #' 'link_svg' creates a SVG of the QR code and stores it in a subfolder of the HTML file's location. The HTML <img> tag links to this file then.
 #' 'none' creates no QR code.
 #' @param style A string specifying the desired style for the visual citation. Possible values are:
-#' "modern", "classic", "clean", "compact" and "none". If "compact" is given, the rendered VC contains
+#' "modern", "classic", "clean", "fancy", "newspaper", "compact" and "none".
+#' If "compact" is given, the rendered VC contains
 #' only the last name of the first author and the publication year, next to the QR code.
 #' If "none" is given, the returned html can use a custom css file provided by the user.
-#' This custom CSS file must specify styles for <div> classes "top-row", "title-row" and "author-row".
+#' This custom CSS file must specify styles for <div> classes "top-row", "title-row" and "author-row". (see vignette)
 #' @param path_absolute Boolean to specify, whether the returned output path is a relative path or an absolute path.
 #' @param use_xaringan Boolean to specify if an HTML output is intended to be included in an HTML presentation (like e.g. xaringan) or not.
 #' When including the visual citation via htmltools::includeHTML(), the QR code needs to be in a subfolder
 #' relative to the rendered presentation, not relative to the visual citation.
 #' @param clean_strings Removes curly braces {} from titles and journal names, as they are often present in
 #' BibTeX strings, but not needed for the rendering. TRUE by default, but can be set to FALSE, if the {} are needed.
+#' @param qr_size Specifies the height/width of the rendered QR code in px. Default: 250px, minimum: 150px. Ignored for SVG output.
+#' @param vc_width Specifies the width of the text part of the visual citation in px.
+#' This can be adjusted to accommodate e.g. untypically long or short titles. Default: 600px
 #' @return A character string with the file path to the created visual citation in the specified output format.
 #'
 #' @examples
@@ -67,6 +72,8 @@ drop_name <- function(bib, cite_key,
                       export_as = "html",
                       max_authors = 3,
                       include_qr = "link",
+                      qr_size = 250,
+                      vc_width = 600,
                       style = "modern",
                       path_absolute = FALSE,
                       use_xaringan = FALSE,
@@ -80,6 +87,15 @@ drop_name <- function(bib, cite_key,
   stopifnot(max_authors >= 0)
   stopifnot(is.character(include_qr))
   stopifnot(include_qr %in% c("embed", "link", "link_svg", "none"))
+  stopifnot(is.numeric(qr_size))
+  if (qr_size < 150) {
+    warning("QR size must be at least 150px. This will now be set as size.")
+    qr_size <- 150
+  }
+  stopifnot(vc_width > 0)
+  if (vc_width < 200) {
+    message("You specified a fairly small 'vc_width'. If you want to have a compact visual citation, the 'compact' style might be handy.")
+  }
   stopifnot(is.character(style))
   # style content is not further checked, as unknown styles will be handled as "none" in get_css_styles()
   stopifnot(is.logical(path_absolute))
@@ -297,7 +313,9 @@ drop_name <- function(bib, cite_key,
     # if PNG is desired output format, the relative filepath must not
     # be adapted for later inclusion of the HTML. Therefore use_xaringan
     # must be ignored, as otherwise the QR will not be included properly
-    use_xaringan = ifelse(export_as == "png", FALSE, use_xaringan)
+    use_xaringan = ifelse(export_as == "png", FALSE, use_xaringan),
+    qr_size = qr_size,
+    vc_width = vc_width
   )
 
   work_list <- work_list %>%

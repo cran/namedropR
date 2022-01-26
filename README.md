@@ -1,15 +1,27 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# namedropR
+# namedropR <img src="man/figures/logo.png" align="right" width="150" />
 
 <!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/namedropR)](https://CRAN.R-project.org/package=namedropR)
+[![R-CMD-check](https://github.com/nucleic-acid/namedropR/workflows/R-CMD-check/badge.svg)](https://github.com/nucleic-acid/namedropR/actions)
+[![Total
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/namedropR)](https://CRAN.R-project.org/package=namedropR)
 <!-- badges: end -->
 
 `namedropR` provides ‘visual citations’ containing the metadata of a
 scientific paper and a ‘QR’ code.
 
 ## Installation
+
+To install, simply run:
+
+``` r
+install.packages("namedropR")
+```
 
 You can install the development version of namedropR from
 [GitHub](https://github.com/) with:
@@ -60,6 +72,9 @@ is given, the QR code points to a search call at
 ``` r
 bib_path <- "path/to/bibliography_file.bib"
 
+# load the package
+library('namedropR')
+
 # create a visual citation as PNG with 'modern' design
 drop_name(bib_path, cite_key = "SomeAuthor2010", export_as = "png", style = "modern")
 
@@ -87,6 +102,26 @@ drop_name(bib_path, export_as = "png", style = "clean")
 Styling is possible via predefined designs or via custom ‘CSS’ to match
 the design of the HTML presentation like e.g. ‘xaringan’ or ‘revealJS’
 (see the vignette for more options).
+
+## How to contribute
+
+If you have ideas for Visual Citation styles and think, everyone should
+be able to use them, feel free to [open an
+issue](https://github.com/nucleic-acid/namedropR/issues) and describe
+the style or provide the CSS code, if you have one already.
+
+If you want to speed things up, you can fork the project to create a
+pull request. Please also open an issue, so we can have a discussion, if
+needed. See the
+[readme](https://github.com/nucleic-acid/namedropR/blob/main/inst/styles/readme.md)
+for details.
+
+## Code of Conduct
+
+Please note that the namedropR project is released with a [Contributor
+Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
 
 ## Notes
 
