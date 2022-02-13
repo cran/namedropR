@@ -1,3 +1,15 @@
+# namedropR 2.2.3
+
+* Fixes inconsistent documentation and presentation in the Readme.
+* Fixes style options that resulted in sub-optimal readability of the rendered citations.
+* Adds sample render images for the predefined styles in the readme.
+* Slight adjustment to the DESCRIPTION title.
+
+# namedropR 2.2.2
+
+* Adds a {pkgdown} website to the repository to make the documentation more accessible.
+* Adds a separate vignette for use in Rmarkdown environments.
+
 # namedropR 2.2.1
 
 * Allows users to also specify the width of the visual citation, as larger QR codes compressed the remaining text area.
