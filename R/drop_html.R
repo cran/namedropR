@@ -17,15 +17,24 @@
 #' When including the visual citation via htmltools::includeHTML(), the QR code needs to be in a subfolder
 #' relative to the rendered presentation, not relative to the visual citation.
 #' @param qr_size Specifies the height/width of the rendered QR code in px. Default: 250px, minimum: 150px. Ignored for SVG output.
+#' @param qr_color Specifies the foreground color of the QR code as hex-string, e.g. "#00FF00".
 #' @param vc_width Specifies the width of the text part of the visual citation in px.
 #' This can be adjusted to accommodate e.g. untypically long or short titles. Default: 600px
+#' @param style_args Custom style arguments can be passed by drop_name for individual styles. These are passed on to get_css_styles(). Style arguments are combinations of 'author_', 'title_', 'journal_' with either one of: 'font', 'size', 'weight' and 'color'. E.g. 'author_weight = "bold"'.
 
 #' @return A htmltools taglist containing the visual citation as HTML representation including style.
 #'
 #' @import htmltools
 
 
-drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, output_dir, style, use_xaringan = FALSE) {
+drop_html <- function(work_item,
+                      include_qr,
+                      qr_size = 250,
+                      qr_color = "#000000",
+                      vc_width = 600,
+                      output_dir, style,
+                      use_xaringan = FALSE,
+                      style_args = list()) {
 
   # print(work_item)
   # CHECK ARGUMENTS
@@ -58,7 +67,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
   }
 
   # OBTAIN CSS STYLE
-  css_styles <- get_css_styles(style = style)
+  css_styles <- get_css_styles(style = style, custom_style = style_args)
 
   # define required QR output dir
   if (use_xaringan) {
@@ -113,7 +122,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
             if (include_qr == "embed") {
               if (capabilities("cairo")) {
                 htmltools::plotTag(
-                  plot(generate_qr(url = work_item$QR)),
+                  plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                   alt = paste0("A QR code linking to the paper of ", work_item$authors_collapsed, " ", as.character(work_item$YEAR)),
                   device = grDevices::svg, width = qr_size, height = qr_size, pixelratio = 1 / 72,
                   mimeType = "image/svg+xml"
@@ -121,7 +130,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
               } else {
                 message("Embedding as SVG is not supported on this device. Try setting up Cairo SVG properly if SVG is desired. Embedding as PNG.")
                 htmltools::plotTag(
-                  plot(generate_qr(url = work_item$QR)),
+                  plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                   alt = paste0("A QR code linking to the paper of ", work_item$authors_collapsed, " ", as.character(work_item$YEAR)),
                   width = qr_size, height = qr_size
                 )
@@ -129,7 +138,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
             } else if (include_qr == "link_svg") {
               if (capabilities("cairo")) {
                 htmltools::capturePlot(
-                  plot(generate_qr(url = work_item$QR)),
+                  plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                   filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, ".svg")),
                   device = grDevices::svg, width = 2, height = 2
                 )
@@ -139,7 +148,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
               }
             } else if (include_qr == "link") {
               htmltools::capturePlot(
-                plot(generate_qr(url = work_item$QR)),
+                plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                 filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, "_qr.png")),
                 width = qr_size, height = qr_size
               )
@@ -185,7 +194,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
             if (include_qr == "embed") {
               if (capabilities("cairo")) {
                 htmltools::plotTag(
-                  plot(generate_qr(url = work_item$QR)),
+                  plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                   alt = paste0("A QR code linking to the paper of ", work_item$authors_collapsed, " ", as.character(work_item$YEAR)),
                   device = grDevices::svg, width = qr_size, height = qr_size, pixelratio = 1 / 72,
                   mimeType = "image/svg+xml"
@@ -193,7 +202,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
               } else {
                 message("Embedding as SVG is not supported on this device. Try setting up Cairo SVG properly if SVG is desired. Embedding as PNG.")
                 htmltools::plotTag(
-                  plot(generate_qr(url = work_item$QR)),
+                  plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                   alt = paste0("A QR code linking to the paper of ", work_item$authors_collapsed, " ", as.character(work_item$YEAR)),
                   width = qr_size, height = qr_size
                 )
@@ -201,7 +210,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
             } else if (include_qr == "link_svg") {
               if (capabilities("cairo")) {
                 htmltools::capturePlot(
-                  plot(generate_qr(url = work_item$QR)),
+                  plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                   filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, ".svg")),
                   device = grDevices::svg, width = 2, height = 2
                 )
@@ -211,7 +220,7 @@ drop_html <- function(work_item, include_qr, qr_size = 250, vc_width = 600, outp
               }
             } else if (include_qr == "link") {
               htmltools::capturePlot(
-                plot(generate_qr(url = work_item$QR)),
+                plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
                 filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, "_qr.png")),
                 width = qr_size, height = qr_size
               )

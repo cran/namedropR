@@ -1,3 +1,20 @@
+# namedropR 2.3.2
+
+* Fixes failing test due to tempdir access problems on win devel.
+* Changes git install snippet in README.md to use {remotes} instead of {devtools}
+
+# namedropR 2.3.1
+
+* Adds documentation / vignette for new styling options
+* changes lazy data loading to false (no relevant datasets are included)
+* tested with R 4.2
+
+# namedropR 2.3.0
+
+* Adds option to specify QR code color.
+* Adds several options to adjust stylistic elements like font, color, size and weight for title, journal and authors.
+* Adjusts predefined styles to allow for custom style editing.
+
 # namedropR 2.2.3
 
 * Fixes inconsistent documentation and presentation in the Readme.
