@@ -1,3 +1,8 @@
+# namedropR 2.3.3
+
+* Fixes critical error previously missed by unit tests when working with file paths. This broke the basic functionality on some systems when working outside of projects.
+* Removes dependency on the {here} package
+
 # namedropR 2.3.2
 
 * Fixes failing test due to tempdir access problems on win devel.
@@ -9,7 +14,7 @@
 * changes lazy data loading to false (no relevant datasets are included)
 * tested with R 4.2
 
-# namedropR 2.3.0
+namedropR 2.3.0
 
 * Adds option to specify QR code color.
 * Adds several options to adjust stylistic elements like font, color, size and weight for title, journal and authors.

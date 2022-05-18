@@ -32,7 +32,8 @@ drop_html <- function(work_item,
                       qr_size = 250,
                       qr_color = "#000000",
                       vc_width = 600,
-                      output_dir, style,
+                      output_dir,
+                      style,
                       use_xaringan = FALSE,
                       style_args = list()) {
 
@@ -71,16 +72,16 @@ drop_html <- function(work_item,
 
   # define required QR output dir
   if (use_xaringan) {
-    qr_dir <- here::here("qr")
+    qr_dir <- file.path(normalizePath("."), "qr") # qr folder on same level as output folder
   } else {
-    qr_dir <- here::here(output_dir, "qr")
+    qr_dir <- file.path(normalizePath(output_dir), "qr") # qr folder as subfolder of output folder
   }
 
   if (include_qr != "embed") {
     if (!dir.exists(qr_dir)) {
       tryCatch(
         expr = {
-          dir.create(qr_dir)
+          dir.create(qr_dir, recursive = TRUE)
         },
         error = function(e) {
           message("Could not create QR output folder:")
@@ -139,7 +140,7 @@ drop_html <- function(work_item,
               if (capabilities("cairo")) {
                 htmltools::capturePlot(
                   plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
-                  filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, ".svg")),
+                  filename = file.path(normalizePath(qr_dir), paste0(work_item$BIBTEXKEY, ".svg")),
                   device = grDevices::svg, width = 2, height = 2
                 )
                 htmltools::tags$img(src = file.path("qr", paste0(work_item$BIBTEXKEY, ".svg")))
@@ -149,7 +150,7 @@ drop_html <- function(work_item,
             } else if (include_qr == "link") {
               htmltools::capturePlot(
                 plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
-                filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, "_qr.png")),
+                filename = file.path(normalizePath(qr_dir), paste0(work_item$BIBTEXKEY, "_qr.png")),
                 width = qr_size, height = qr_size
               )
               htmltools::tags$img(src = file.path("qr", paste0(work_item$BIBTEXKEY, "_qr.png")), alt = "QR code")
@@ -211,7 +212,7 @@ drop_html <- function(work_item,
               if (capabilities("cairo")) {
                 htmltools::capturePlot(
                   plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
-                  filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, ".svg")),
+                  filename = file.path(normalizePath(qr_dir), paste0(work_item$BIBTEXKEY, ".svg")),
                   device = grDevices::svg, width = 2, height = 2
                 )
                 htmltools::tags$img(src = file.path("qr", paste0(work_item$BIBTEXKEY, ".svg")))
@@ -221,7 +222,7 @@ drop_html <- function(work_item,
             } else if (include_qr == "link") {
               htmltools::capturePlot(
                 plot(generate_qr(url = work_item$QR), col = c("white", qr_color)),
-                filename = here::here(qr_dir, paste0(work_item$BIBTEXKEY, "_qr.png")),
+                filename = file.path(normalizePath(qr_dir), paste0(work_item$BIBTEXKEY, "_qr.png")),
                 width = qr_size, height = qr_size
               )
               htmltools::tags$img(src = file.path("qr", paste0(work_item$BIBTEXKEY, "_qr.png")), alt = "QR code")

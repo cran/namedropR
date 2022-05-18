@@ -15,23 +15,34 @@
 #' }
 #'
 #' @importFrom htmltools tags save_html
-#' @importFrom here here
 #' @importFrom webshot webshot
 
 write_vc <- function(work_item, path_absolute, output_dir, export_as) {
 
   # EXPORT RESULT(s)
 
-  if (path_absolute) {
-    output_path <- here::here(output_dir, paste0(work_item$BIBTEXKEY, ".html"))
-  } else {
-    output_path <- file.path(output_dir, paste0(work_item$BIBTEXKEY, ".html"))
+  # create output directory, if needed
+  if (!dir.exists(output_dir)) {
+    tryCatch(
+      expr = dir.create(output_dir, recursive = TRUE),
+      error = function(e) {
+        message("Could not create the output directory. Check file permissions.")
+        print(e)
+      },
+      warning = function(w) {
+        message("Having difficulties creating the output directory:")
+        print(w)
+      }
+    )
   }
+
+  output_file <- file.path(output_dir, paste0(work_item$BIBTEXKEY, ".html"))
+  # browser()
 
   if (export_as == "html_full") {
     tryCatch(
       expr = {
-        htmltools::save_html(work_item$vcs, file = here::here(output_path))
+        htmltools::save_html(work_item$vcs, file = output_file)
       },
       error = function(e) {
         message("Could not save the HTML output:")
@@ -49,7 +60,7 @@ write_vc <- function(work_item, path_absolute, output_dir, export_as) {
       expr = {
         write(
           as.character(htmltools::as.tags(work_item$vcs)),
-          file = here::here(output_path)
+          file = output_file
         )
       },
       error = function(e) {
@@ -68,7 +79,7 @@ write_vc <- function(work_item, path_absolute, output_dir, export_as) {
       # renders as "complete" html to get the white background for PNG snapshot.
       tryCatch(
         expr = {
-          htmltools::save_html(work_item$vcs, file = here::here(output_path))
+          htmltools::save_html(work_item$vcs, file = output_file)
         },
         error = function(e) {
           message("Could not save the intermediate HTML output:")
@@ -80,9 +91,10 @@ write_vc <- function(work_item, path_absolute, output_dir, export_as) {
         }
       )
 
+
       tryCatch(
         expr = {
-          webshot::webshot(output_path, paste0(output_path, ".png"), selector = ".visual-citation", zoom = 2)
+          webshot::webshot(output_file, paste0(output_file, ".png"), selector = ".visual-citation", zoom = 2)
         },
         error = function(e) {
           message("Could not take a screenshot of the intermediate HTML.")
@@ -93,12 +105,27 @@ write_vc <- function(work_item, path_absolute, output_dir, export_as) {
           print(w)
         }
       )
-      unlink(output_path)
+      unlink(output_file)
+
       # to point to the png instead return its filepath
-      return(paste0(output_path, ".png"))
+      png_out <- paste0(output_file, ".png")
+
+      return_path_png <- ifelse(
+          path_absolute,
+          R.utils::getAbsolutePath(png_out),
+          R.utils::getRelativePath(png_out)
+          )
+      return(return_path_png)
     }
   } else {
     stop("Output format unknown")
   }
-  return(as.character(output_path))
+
+  return_path_html <- ifelse(
+    path_absolute,
+    R.utils::getAbsolutePath(output_file),
+    R.utils::getRelativePath(output_file)
+  )
+
+  return(return_path_html)
 }

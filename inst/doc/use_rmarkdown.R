@@ -47,7 +47,7 @@ dplyr::glimpse(bib)
 #  htmltools::includeHTML(
 #    drop_name(bib,
 #      cite_key = "active2021",
-#      export_as = "hmtl",
+#      export_as = "html",
 #      use_xaringan = TRUE
 #    )
 #  )
