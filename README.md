@@ -65,6 +65,8 @@ There is also a less intrusive, compact style, as seen on the left.
 
 ## Basic Usage
 
+### Working with bibtex bibliographies
+
 This package accepts bibliographic information as ‘BibTeX’ and
 ‘BibLaTeX’ references and includes a QR code pointing to the
 [‘DOI’](https://www.doi.org). If the ‘DOI’ is not available in the
@@ -126,6 +128,41 @@ drop_name(
   style = "clean"
 )
 #> renders all entries within the specified bibliography file
+```
+
+### Pulling data from Crossref
+
+If you don’t have a \*.bib file, but DOIs instead, you can pass them to
+`drop_name_crossref()` which pulls the data from
+[Crossref](https://www.crossref.org) and passes the downloaded data on
+to `drop_name()`.
+
+**TEMPORARY NOTE:** *Due to recent API changes in Crossref you need to
+have {rcrossref} version \> 1.1 installed. As long as {rcrossref} v1.2
+is not yet available on CRAN, installing the development version \>=
+v1.1.0.99 might avoid error messages. If you don’t feel comfortable with
+installing development versions (use at your own risk!), this function
+will only work with CRAN version of {rcrossref} \>= v1.2 installed.*
+
+``` r
+# DOIs can be named vectors...
+drop_name_crossref(c(cite1 = "10.1126/science.169.3946.635", cite2 = "10.1111/joms.12670"))
+
+# ...or unnamed vectors
+drop_name_crossref(c("10.1126/science.169.3946.635", "10.1111/joms.12670"))
+```
+
+All options, that can be passed to `drop_name()`, can also be specified
+in `drop_name_crossref()`, for example the following call pulls data for
+two references from Crossref and renders them as PNG files with the
+‘newspaper’ style:
+
+``` r
+drop_name_crossref(
+  c(cite1 = "10.1126/science.169.3946.635", cite2 = "10.1111/joms.12670"),
+  export_as = "png",
+  style = "newspaper"
+)
 ```
 
 ## Options

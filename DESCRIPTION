@@ -1,36 +1,42 @@
-Package: namedropR
 Type: Package
-Title: Create Visual Citations for Presentation Slides
-Version: 2.3.3
+Package: namedropR
+Title: Create Visual Citations for Presentations and Posters
+Version: 2.4.1
 Authors@R: c(
-    person(given = c("Christian", "A."),
-           family = "Gebhard",
-           role = c("aut", "cre"),
-           email = "christian.gebhard@posteo.de",
-           comment = c(ORCID = "0000-0002-8792-565X"))
-    )
-Description: Provides 'visual citations' containing the metadata of a scientific paper and a 'QR' code.
-    A 'visual citation' is a banner containing title, authors, journal and year of a publication.
-    This package can create such banners based on 'BibTeX' and 'BibLaTeX' references
-    and includes a QR code pointing to the 'DOI'.
-    The resulting HTML object or PNG image can be included in a presentation to point the audience to good resources for further reading.
-    Styling is possible via predefined designs or via custom 'CSS'.
-    This package is not intended as replacement for proper reference manager packages, 
-    but a tool to enrich scientific presentation slides.
+    person(c("Christian", "A."), "Gebhard", , "christian.gebhard@posteo.de", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8792-565X")),
+    person("Lukas", "Wallrich", , "l.wallrich@bbk.ac.uk", role = "ctb",
+           comment = c(ORCID = "0000-0003-2121-5177")),
+    person("Matthew T.", "Warkentin", , "warkentin@lunenfeld.ca", role = "ctb",
+           comment = c(ORCID = "0000-0001-8730-3511"))
+  )
+Description: Provides 'visual citations' containing the metadata of a
+    scientific paper and a 'QR' code.  A 'visual citation' is a banner
+    containing title, authors, journal and year of a publication.  This
+    package can create such banners based on 'BibTeX' and 'BibLaTeX'
+    references or call the reference metadata from 'Crossref'-API. The
+    banners include a QR code pointing to the 'DOI'.  The resulting HTML
+    object or PNG image can be included in a presentation to point the
+    audience to good resources for further reading.  Styling is possible
+    via predefined designs or via custom 'CSS'.  This package is not
+    intended as replacement for proper reference manager packages, but a
+    tool to enrich scientific presentation slides and conference posters.
 License: MIT + file LICENSE
-Imports: htmltools, qrcode, lubridate, webshot, bib2df, dplyr, readr,
-        stringr, R.utils
-Encoding: UTF-8
-BugReports: https://github.com/nucleic-acid/namedropR/issues
 URL: https://github.com/nucleic-acid/namedropR
-RoxygenNote: 7.1.2
-Suggests: testthat (>= 3.0.0), knitr, withr, rmarkdown
-Config/testthat/edition: 3
+BugReports: https://github.com/nucleic-acid/namedropR/issues
+Imports: bib2df, dplyr, htmltools, lubridate, qrcode (>= 0.1.4),
+        R.utils, readr, stringr, webshot
+Suggests: knitr, rcrossref, rmarkdown, testthat (>= 3.0.0), withr
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2022-05-18 17:29:15 UTC; christian
+Packaged: 2022-08-28 10:35:27 UTC; christian
 Author: Christian A. Gebhard [aut, cre]
-    (<https://orcid.org/0000-0002-8792-565X>)
+    (<https://orcid.org/0000-0002-8792-565X>),
+  Lukas Wallrich [ctb] (<https://orcid.org/0000-0003-2121-5177>),
+  Matthew T. Warkentin [ctb] (<https://orcid.org/0000-0001-8730-3511>)
 Maintainer: Christian A. Gebhard <christian.gebhard@posteo.de>
 Repository: CRAN
-Date/Publication: 2022-05-18 17:50:02 UTC
+Date/Publication: 2022-08-28 10:50:02 UTC

@@ -34,6 +34,7 @@
 #' BibTeX strings, but not needed for the rendering. TRUE by default, but can be set to FALSE, if the {} are needed.
 #' @param qr_size Specifies the height/width of the rendered QR code in px. Default: 250px, minimum: 150px. Ignored for SVG output.
 #' @param qr_color Specifies the foreground color of the QR code as hex-string, e.g. "#00FF00"; default is black: "#000000".
+#' @param qr_hyperlink Logical. Should the QR code be a hyperlink?
 #' @param vc_width Specifies the width of the text part of the visual citation in px.
 #' This can be adjusted to accommodate e.g. untypically long or short titles. Default: 600px
 #' @param ... Allows for custom style arguments to override predefined styles. Supported are: author_size, author_font,
@@ -83,7 +84,7 @@
 #' @importFrom htmltools tags save_html
 #' @importFrom lubridate year ymd
 #' @importFrom webshot webshot
-#' @importFrom stringr str_detect
+#' @importFrom stringr str_detect str_remove_all str_trunc str_replace_all
 
 drop_name <- function(bib, cite_key,
                       output_dir = "visual_citations",
@@ -92,6 +93,7 @@ drop_name <- function(bib, cite_key,
                       include_qr = "link",
                       qr_size = 250,
                       qr_color = "#000000",
+                      qr_hyperlink = FALSE,
                       vc_width = 600,
                       style = "modern",
                       path_absolute = FALSE,
@@ -128,6 +130,7 @@ drop_name <- function(bib, cite_key,
   # style content is not further checked, as unknown styles will be handled as "none" in get_css_styles()
   stopifnot(is.logical(path_absolute))
   stopifnot(is.logical(use_xaringan))
+  stopifnot(is.logical(qr_hyperlink))
   stopifnot(is.logical(clean_strings))
 
   # READ AND CHECK BIB FILE or BIBENTRY
@@ -248,16 +251,24 @@ drop_name <- function(bib, cite_key,
 
   # the remaining URLs will be created below, after condensing the authors lists
 
+  # select required columns only and add missing BIBTEXKEYs:
+  clean_bib <- dplyr::select(bib_data, .data$YEAR, .data$AUTHOR, .data$JOURNAL, .data$TITLE, .data$BIBTEXKEY, .data$QR) %>%
+    dplyr::mutate(
+      `BIBTEXKEY` = ifelse(
+        is.na(.data$BIBTEXKEY),
+        stringr::str_remove_all(paste0(stringr::str_trunc(.data$TITLE, 10, ellipsis = ""), stringr::str_trunc(.data$JOURNAL, 10, ellipsis = ""), .data$YEAR), " "),
+        .data$BIBTEXKEY
+      )
+    )
 
   # check for duplicate cite_keys
   if (any(dplyr::count(bib_data, .data$BIBTEXKEY)$n > 1)) {
-    warning("BIBTEX keys are not unique in this bibliography. Duplicates are dropped before proceding.")
+    warning("There are duplicated bibtex keys / citation keys in this bibliography. I'll try to still render all selected entries. Make sure to check, whether the visual citations are as expected.")
   }
 
-  # drop rows without BIBTEXKEY and select required columns only:
-  clean_bib <- dplyr::distinct(bib_data, .data$BIBTEXKEY, .keep_all = TRUE) %>%
-    dplyr::filter(!is.na(.data$BIBTEXKEY)) %>%
-    dplyr::select(.data$YEAR, .data$AUTHOR, .data$JOURNAL, .data$TITLE, .data$BIBTEXKEY, .data$QR)
+  # Ensure BIBTEXKEY are unique.
+  letters_blank <- c("", letters)
+  clean_bib <- dplyr::ungroup(dplyr::mutate(dplyr::group_by(clean_bib, .data$BIBTEXKEY), `BIBTEXKEY_2` = stringr::str_replace_all(paste0(.data$BIBTEXKEY, letters_blank[1:dplyr::n()]), " ", "_")))
 
 
   # create output directory, if needed
@@ -313,7 +324,8 @@ drop_name <- function(bib, cite_key,
 
   work_list <- work_list %>%
     dplyr::mutate(
-      authors_collapsed = authors_collapsed,
+      authors_collapsed = authors_collapsed, # add collapsed authors
+      `BIBTEXKEY` = .data$BIBTEXKEY_2 # replace duplicated keys with deduplicated keys
     )
 
   # now create QR URLs for remaining missing entries with short author list
@@ -344,6 +356,7 @@ drop_name <- function(bib, cite_key,
     use_xaringan = ifelse(export_as == "png", FALSE, use_xaringan),
     qr_size = qr_size,
     qr_color = qr_color,
+    qr_hyperlink = qr_hyperlink,
     vc_width = vc_width,
     style_args = style_args
   )

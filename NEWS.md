@@ -1,3 +1,13 @@
+# namedropR 2.4.1
+
+* Solves issue of failing tests in CRAN checks.
+
+# namedropR 2.4.0
+
+* Adds drop_name_crossref() function (thanks to Lukas Wallrich)
+* Adds the ability to turn a QR code into a hyperlink (thanks to Matt Warkentin)
+* Rebuilds documentation using latest roxygen2 version to adhere to HTML5 standards
+
 # namedropR 2.3.3
 
 * Fixes critical error previously missed by unit tests when working with file paths. This broke the basic functionality on some systems when working outside of projects.
